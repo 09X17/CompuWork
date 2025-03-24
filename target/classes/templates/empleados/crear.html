@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Empleado</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --primary-dark: #224abe;
+            --secondary-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+            --gray-light: #e3e6f0;
+        }
+
+        body {
+            background-color: var(--light-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.8rem 2rem rgba(58, 59, 69, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.15);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline-secondary {
+            transition: all 0.3s;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        .input-group-text {
+            background-color: var(--light-color);
+            border: 1px solid var(--gray-light);
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-light);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .salary-field {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-icon {
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <div class="form-container">
+            <div class="card shadow-lg animate__animated animate__fadeIn">
+                <div class="card-header text-center">
+                    <h2 class="mb-0"><i class="fas fa-user-plus me-2"></i>Nuevo Empleado</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form th:action="@{/empleados/guardar}" method="post" id="employeeForm">
+                        <h5 class="section-title"><i class="fas fa-user-circle me-2"></i>Información Personal</h5>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre Completo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text form-icon"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" name="nombre" id="nombre" required
+                                        placeholder="Ej: Juan Pérez" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="correo" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text form-icon"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" name="correo" id="correo" required
+                                        placeholder="Ej: juan.perez@empresa.com" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cargo" class="form-label">Cargo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text form-icon"><i class="fas fa-briefcase"></i></span>
+                                    <input type="text" class="form-control" name="cargo" id="cargo" required
+                                        placeholder="Ej: Desarrollador Senior" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="departamentoId" class="form-label">Departamento</label>
+                                <div class="input-group">
+                                    <span class="input-group-text form-icon"><i class="fas fa-building"></i></span>
+                                    <select name="departamentoId" id="departamentoId" class="form-select" required>
+                                        <option value="">-- Seleccionar --</option>
+                                        <option th:each="dep : ${departamentos}" th:value="${dep.id}"
+                                            th:text="${dep.nombre}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="section-title"><i class="fas fa-file-signature me-2"></i>Tipo de Contrato</h5>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="tipo" class="form-label">Tipo de Empleado</label>
+                                <select name="tipo" id="tipo" class="form-select" required
+                                    onchange="mostrarCampoSalario()">
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="TIEMPO_COMPLETO">Tiempo Completo</option>
+                                    <option value="TEMPORAL">Temporal</option>
+                                    <option value="HORAS">Por Horas</option>
+                                    <option value="PERMANENTE">Permanente</option>
+                                </select>
+                            </div>
+
+                            <!-- Campos de salario dinámicos -->
+                            <div class="col-md-6 mb-3 salary-field" id="campoSalarioMensual" style="display: none;">
+                                <label for="salarioMensual" class="form-label">Salario Mensual</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" name="salarioMensual" id="salarioMensual"
+                                        step="0.01" placeholder="0.00" />
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 salary-field" id="campoSalarioPorHora" style="display: none;">
+                                <label for="tarifaHora" class="form-label">Tarifa por Hora</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" name="tarifaHora" id="tarifaHora"
+                                        step="0.01" placeholder="0.00" />
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 salary-field" id="campoSalarioFijo" style="display: none;">
+                                <label for="salarioFijo" class="form-label">Salario Fijo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" name="salarioMensual" id="salarioFijo"
+                                        step="0.01" placeholder="0.00" />
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 salary-field" id="campoEmpleadoTemporal" style="display: none;">
+                                <label for="pagoPorHora" class="form-label">Pago por Hora</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" name="pagoPorHora" id="pagoPorHora"
+                                        step="0.01" placeholder="0.00" />
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between border-top pt-4 mt-4">
+                            <a th:href="@{/empleados}" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Guardar Empleado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- GSAP para animaciones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        // Versión definitiva de la función mostrarCampoSalario
+        function mostrarCampoSalario() {
+            const tipo = document.getElementById("tipo").value;
+            console.log("Tipo seleccionado:", tipo); 
+
+            // Lista de todos los posibles campos de salario
+            const camposSalario = {
+                "TIEMPO_COMPLETO": "campoSalarioMensual",
+                "HORAS": "campoSalarioPorHora",
+                "PERMANENTE": "campoSalarioFijo",
+                "TEMPORAL": "campoEmpleadoTemporal"
+            };
+
+            // Ocultar todos los campos de salario primero
+            Object.values(camposSalario).forEach(id => {
+                const campo = document.getElementById(id);
+                if (campo) {
+                    campo.style.display = "none";
+                    const input = campo.querySelector("input");
+                    if (input) {
+                        input.removeAttribute("required");
+                        input.value = ""; 
+                    }
+                }
+            });
+
+            const campoId = camposSalario[tipo];
+            if (campoId) {
+                const campo = document.getElementById(campoId);
+                if (campo) {
+                    campo.style.removeProperty("display");
+                    campo.style.opacity = "0";
+
+                    const input = campo.querySelector("input");
+                    if (input) {
+                        input.setAttribute("required", "");
+                    }
+
+                    // Animación
+                    gsap.fromTo(campo, { opacity: 0, y: 10 }, {
+                        duration: 0.3,
+                        opacity: 1,
+                        y: 0,
+                        ease: "power1.out"
+                    });
+                }
+            }
+
+        }
+
+        // Inicialización mejorada
+        document.addEventListener("DOMContentLoaded", function () {
+            // Configurar el evento change para el select
+            const selectTipo = document.getElementById("tipo");
+            if (selectTipo) {
+                selectTipo.addEventListener("change", mostrarCampoSalario);
+
+                // Mostrar el campo correspondiente al valor inicial
+                mostrarCampoSalario();
+            }
+
+            // Animación de entrada para la tarjeta
+            const card = document.querySelector(".card");
+            if (card) {
+                gsap.from(card, {
+                    duration: 0.8,
+                    y: 30,
+                    opacity: 0,
+                    delay: 0.3,
+                    ease: "back.out"
+                });
+            }
+        });
+
+        // Validación del formulario (versión mejorada)
+        const form = document.getElementById("employeeForm");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                const tipo = document.getElementById("tipo")?.value;
+                let isValid = true;
+
+                if (tipo) {
+                    const campoId = {
+                        "TIEMPO_COMPLETO": "salarioMensual",
+                        "HORAS": "tarifaHora",
+                        "PERMANENTE": "salarioFijo",
+                        "TEMPORAL": "pagoPorHora"
+                    }[tipo];
+
+                    if (campoId) {
+                        const input = document.getElementById(campoId);
+                        if (input) {
+                            const valor = input.value;
+                            if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
+                                isValid = false;
+                                // Resaltar el campo inválido
+                                gsap.to(input, {
+                                    duration: 0.5,
+                                    x: [-5, 5, -5, 5, 0],
+                                    backgroundColor: "rgba(231, 76, 60, 0.2)",
+                                    ease: "power1.out",
+                                    onComplete: () => {
+                                        gsap.to(input, {
+                                            duration: 0.5,
+                                            backgroundColor: "white"
+                                        });
+                                    }
+                                });
+                                alert(`Por favor ingrese un valor válido para ${input.getAttribute("name")}`);
+                            }
+                        }
+                    }
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

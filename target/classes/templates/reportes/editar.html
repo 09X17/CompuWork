@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Reporte - CompuWork</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --primary-dark: #224abe;
+            --secondary-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --gray-light: #e3e6f0;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.8rem 2rem rgba(58, 59, 69, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+            background-color: white !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.15);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-light);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--danger-color);
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .rating-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .rating-stars i {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-light);
+            transition: all 0.2s;
+        }
+
+        .rating-stars i.fas {
+            color: var(--warning-color);
+        }
+
+        .rating-stars i:hover {
+            transform: scale(1.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            border: 1px solid var(--gray-light) !important;
+        }
+
+        .alert-danger {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .rating-container {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="form-container">
+            <div class="card shadow-lg animate__animated animate__fadeIn">
+                <div class="card-header text-center">
+                    <h2 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Reporte de Desempeño</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <!-- Mensajes de error mejorados -->
+                    <div th:if="${error}" class="alert alert-danger animate__animated animate__fadeIn" 
+                         style="border-left: 4px solid var(--danger-color);">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+                    
+                    <form th:action="@{'/reportes/actualizar/' + ${reporte.id}}" method="post" id="editReportForm">
+                        <!-- Campo Empleado mejorado -->
+                        <div class="mb-4">
+                            <label for="empleadoId" class="form-label required-field">
+                                <i class="fas fa-user-tie me-2"></i>Empleado
+                            </label>
+                            <select class="form-select" id="empleadoId" name="empleadoId" required>
+                                <option value="">Seleccione un empleado</option>
+                                <option th:each="emp : ${empleados}" 
+                                        th:value="${emp.id}" 
+                                        th:text="${emp.nombre + ' (' + emp.cargo + ')'}"
+                                        th:selected="${emp.id == reporte.empleado.id}"></option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campo Fecha mejorado -->
+                        <div class="mb-4">
+                            <label for="fecha" class="form-label required-field">
+                                <i class="fas fa-calendar-alt me-2"></i>Fecha de Evaluación
+                            </label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" 
+                                   th:value="${#temporals.format(reporte.fecha, 'yyyy-MM-dd')}" required>
+                        </div>
+                        
+                        <!-- Campo Evaluación mejorado -->
+                        <div class="mb-4">
+                            <label for="evaluacion" class="form-label required-field">
+                                <i class="fas fa-clipboard-check me-2"></i>Tipo de Evaluación
+                            </label>
+                            <select class="form-select" id="evaluacion" name="evaluacion" required>
+                                <option value="">Seleccione una evaluación</option>
+                                <option th:each="eval : ${tiposEvaluacion}" 
+                                        th:value="${eval}" 
+                                        th:text="${eval}"
+                                        th:selected="${eval == reporte.evaluacion}"></option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campo Puntuación mejorado con estrellas -->
+                        <div class="mb-4">
+                            <label class="form-label required-field">
+                                <i class="fas fa-star me-2"></i>Puntuación
+                            </label>
+                            <div class="rating-container">
+                                <div class="rating-stars">
+                                    <i class="far fa-star" id="star1" onclick="setRating(1)"></i>
+                                    <i class="far fa-star" id="star2" onclick="setRating(2)"></i>
+                                    <i class="far fa-star" id="star3" onclick="setRating(3)"></i>
+                                    <i class="far fa-star" id="star4" onclick="setRating(4)"></i>
+                                    <i class="far fa-star" id="star5" onclick="setRating(5)"></i>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" class="form-control" id="puntuacion" name="puntuacion" 
+                                           min="1" max="10" th:value="${reporte.puntuacion}" required 
+                                           style="width: 70px; text-align: center;">
+                                    <span class="ms-2 fw-bold">/ 10</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo Comentarios mejorado -->
+                        <div class="mb-4">
+                            <label for="comentarios" class="form-label">
+                                <i class="fas fa-comment me-2"></i>Comentarios Adicionales
+                            </label>
+                            <textarea class="form-control" id="comentarios" name="comentarios" rows="5"
+                                      th:text="${reporte.comentarios}"
+                                      placeholder="Ingrese observaciones relevantes sobre el desempeño del empleado..."></textarea>
+                        </div>
+                        
+                        <!-- Botones mejorados -->
+                        <div class="d-flex justify-content-between border-top pt-4 mt-4">
+                            <a th:href="@{/reportes}" class="btn btn-secondary px-4">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Actualizar Reporte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- GSAP para animaciones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        // Inicializar estrellas según la puntuación existente
+        document.addEventListener("DOMContentLoaded", function() {
+            // Obtener puntuación actual
+            const puntuacionInput = document.getElementById('puntuacion');
+            const currentRating = Math.ceil(puntuacionInput.value / 2);
+            
+            // Establecer visualización inicial de estrellas
+            if (currentRating >= 1 && currentRating <= 5) {
+                setRating(currentRating);
+            }
+            
+            // Animación de entrada
+            gsap.from(".card", {
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                delay: 0.3,
+                ease: "back.out"
+            });
+
+            gsap.from(".form-control, .form-select, textarea, .rating-stars", {
+                duration: 0.5,
+                opacity: 0,
+                y: 20,
+                stagger: 0.1,
+                delay: 0.5,
+                ease: "power1.out"
+            });
+        });
+
+        // Función para establecer la puntuación con estrellas
+        function setRating(rating) {
+            const puntuacionInput = document.getElementById('puntuacion');
+            puntuacionInput.value = rating * 2; // Convertir a escala 1-10
+            
+            // Actualizar visualización de estrellas
+            for (let i = 1; i <= 5; i++) {
+                const star = document.getElementById(`star${i}`);
+                if (i <= rating) {
+                    star.classList.add('fas');
+                    star.classList.remove('far');
+                } else {
+                    star.classList.add('far');
+                    star.classList.remove('fas');
+                }
+            }
+        }
+
+        // Validación del formulario
+        const form = document.getElementById('editReportForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validar puntuación
+                const puntuacion = document.getElementById('puntuacion').value;
+                if (puntuacion < 1 || puntuacion > 10) {
+                    isValid = false;
+                    gsap.to("#puntuacion", {
+                        duration: 0.5,
+                        x: [-5, 5, -5, 5, 0],
+                        backgroundColor: "rgba(231, 76, 60, 0.2)",
+                        ease: "power1.out",
+                        onComplete: () => {
+                            gsap.to("#puntuacion", {
+                                duration: 0.5,
+                                backgroundColor: "white"
+                            });
+                        }
+                    });
+                    alert("La puntuación debe estar entre 1 y 10");
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
